@@ -1,293 +1,213 @@
-# toti-store <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر هاجر | تجربة تفاعلية</title>
+    <title>Hagar Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-blue: #0071bc;
-            --soft-pink: #ff8dc7;
-            --gold: #d4a373;
+            --primary: #0071bc;
+            --accent: #ff8dc7;
+            --wa-green: #2ecc71;
+            --wa-dark: #128C7E;
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            font-family: 'Cairo', sans-serif;
             scroll-behavior: smooth;
             background: #fff;
+            overflow-x: hidden;
         }
 
-        /* قائمة تنقل علوية جذابة */
+        /* --- Navbar --- */
         nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 15px 0;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            gap: 30px;
+            position: fixed; top: 0; width: 100%; padding: 20px 0;
+            z-index: 1000; display: flex; justify-content: center; gap: 30px;
             transition: 0.4s;
         }
         nav.scrolled {
             background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 10px 0;
         }
         nav a {
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            transition: 0.3s;
+            text-decoration: none; color: white; font-weight: 700;
+            font-size: 1.3rem; transition: 0.3s;
         }
-        nav.scrolled a { color: var(--gold); }
+        nav.scrolled a { color: var(--primary); }
 
-        /* --- قسم الترحيب (تأثير دخول) --- */
-        .welcome-section {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: radial-gradient(circle at center, #29abe2 0%, #0071bc 100%);
-            perspective: 1000px;
-            animation: fadeIn 1.5s ease;
-        }
-
-        /* أنميشن السيد توتي المطور */
-        .scene {
-            width: 300px;
-            height: 300px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.3));
-        }
-
-        .octopus {
-            width: 150px;
-            height: 180px;
-            position: relative;
-            transform-style: preserve-3d;
-            animation: float 4s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(2deg); }
-            50% { transform: translateY(-20px) rotate(-2deg); }
-        }
-
-        .head {
-            position: absolute;
-            width: 100%;
-            height: 140px;
-            background: linear-gradient(135deg, var(--soft-pink) 0%, #ff4081 100%);
-            border-radius: 70px 70px 60px 60px;
-            z-index: 5;
-        }
-
-        /* تفاصيل الوجه والأذرع (نفس الكود السابق مع تحسينات طفيفة) */
-        .face { position: absolute; width: 100px; height: 60px; top: 40px; left: 25px; z-index: 6; }
-        .eye { position: absolute; width: 35px; height: 40px; background: white; border-radius: 50%; border: 2px solid #333; }
-        .eye.left { left: 5px; } .eye.right { right: 5px; }
-        .pupil { position: absolute; width: 18px; height: 18px; background: #333; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .mouth { position: absolute; width: 30px; height: 15px; border-bottom: 4px solid #333; border-radius: 0 0 20px 20px; top: 50px; left: 35px; transition: 0.3s; }
-        .tentacles { position: absolute; width: 100%; height: 80px; bottom: -20px; display: flex; justify-content: center; z-index: 4; }
-        .tentacle { width: 20px; height: 70px; background: #ff4081; margin: 0 -2px; border-radius: 0 0 15px 15px; transform-origin: top center; animation: wave 1.5s ease-in-out infinite; }
-        @keyframes wave { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
-
-        .octopus.jump { animation: jumpAction 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-        @keyframes jumpAction { 0% { transform: scale(1); } 50% { transform: scale(1.1) translateY(-100px); } 100% { transform: scale(1); } }
-
-        .btn-scroll {
-            margin-top: 40px;
-            padding: 18px 45px;
-            background: white;
-            color: var(--primary-blue);
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            transition: 0.4s;
-        }
-        .btn-scroll:hover { transform: translateY(-5px); background: #f0f0f0; }
-
-        /* --- قسم العطور (تأثير ظهور عند التمرير) --- */
-        .perfume-section {
-            padding: 100px 20px;
-            background: #fffcfd;
+        /* --- انميشن ظهور الأقسام --- */
+        .reveal {
             opacity: 0;
-            transform: translateY(50px);
+            transform: translateY(30px);
             transition: 1s all ease;
         }
-        .perfume-section.visible {
+        .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
 
-        .bottle-3d {
-            width: 100px;
-            height: 170px;
-            background: rgba(255, 255, 255, 0.8);
-            border: 2px solid var(--gold);
-            border-radius: 12px;
-            margin: 50px auto;
-            position: relative;
-            transform-style: preserve-3d;
-            animation: spin 12s linear infinite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            color: var(--gold);
+        /* --- Hero Section (Mr. Totti) --- */
+        .hero {
+            height: 100vh;
+            background: radial-gradient(circle at center, #29abe2 0%, #0071bc 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; /* لضمان توسيط كل شيء */
         }
-        @keyframes spin { from { transform: rotateY(0); } to { transform: rotateY(360deg); } }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 40px;
-            max-width: 1200px;
-            margin: 50px auto;
-        }
-
-        .product-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: 0.5s;
-            position: relative;
-        }
-        .product-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        .product-card img {
-            width: 100%;
-            height: 350px;
-            object-fit: cover;
-            transition: 0.8s;
-        }
-        .product-card:hover img { transform: scale(1.1); }
+        .scene { width: 280px; height: 280px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .octopus { width: 150px; height: 180px; position: relative; transform-style: preserve-3d; }
+        .head { position: absolute; width: 100%; height: 140px; background: linear-gradient(135deg, var(--accent), #ff4081); border-radius: 70px 70px 60px 60px; z-index: 5; }
+        .eye { position: absolute; width: 35px; height: 40px; background: white; border-radius: 50%; border: 2px solid #333; top: 40px; }
+        .eye.left { left: 25px; } .eye.right { right: 25px; }
+        .pupil { position: absolute; width: 16px; height: 16px; background: #333; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .mouth { position: absolute; width: 30px; height: 15px; border-bottom: 4px solid #333; border-radius: 0 0 20px 20px; top: 90px; left: 60px; }
+        .tentacles { position: absolute; width: 100%; height: 80px; bottom: -20px; display: flex; justify-content: center; }
+        .tentacle { width: 20px; height: 70px; background: #ff4081; margin: 0 -1px; border-radius: 0 0 15px 15px; animation: wave 1.5s infinite; }
+        @keyframes wave { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+        .jump { animation: jumpAnim 0.8s ease; }
+        @keyframes jumpAnim { 50% { transform: translateY(-100px) rotateY(360deg); } }
         
-        .overlay {
-            position: absolute;
-            bottom: 0;
+        /* تعديل مكان الكلمة ليكون في المنتصف */
+        .totti-name {
+            color: white; 
+            font-size: 3.5rem; 
+            font-weight: 900; 
+            margin-top: 20px;
             width: 100%;
-            padding: 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.7));
-            color: white;
             text-align: center;
+            text-shadow: 2px 2px 20px rgba(0,0,0,0.2);
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* --- قسم العطور --- */
+        .perfume-section { padding: 80px 20px; background: #fffcfd; text-align: center; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; margin: 40px auto; }
+        .card {
+            background: white; border-radius: 25px; padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); transition: 0.4s;
+            cursor: pointer; border: 1px solid #eee;
+        }
+        .card:hover { transform: translateY(-10px); border-color: var(--accent); }
+        .card h3 { color: #333; font-size: 1.4rem; margin: 15px 0; }
+        .card p { color: #777; font-size: 0.9rem; font-style: italic; }
 
+        /* --- قسم التواصل --- */
+        .contact-section { padding: 100px 20px; background: #fff0f5; text-align: center; }
+        .contact-title { color: var(--primary); font-size: 2.5rem; margin-bottom: 40px; }
+        .btns-container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        
+        .btn-wa {
+            width: 280px; padding: 15px; border-radius: 50px; color: white;
+            text-decoration: none; font-weight: bold; font-size: 1.3rem;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1); transition: 0.3s;
+        }
+        .direct { background: var(--wa-green); }
+        .group { background: var(--wa-dark); }
+        .btn-wa:hover { transform: scale(1.05); opacity: 0.9; }
+
+        .pink-note {
+            font-family: 'Aref Ruqaa', serif; font-size: 3rem; color: #d63384;
+            margin-top: 40px; line-height: 1.2;
+        }
+
+        /* --- فقاقيع --- */
+        .particle { position: fixed; pointer-events: none; z-index: 9999; animation: fly 2s forwards; }
+        .bubble { width: 18px; height: 18px; background: rgba(255,255,255,0.4); border-radius: 50%; border: 1px solid #fff; }
+        @keyframes fly { 0% { opacity: 1; } 100% { transform: translate(var(--x), var(--y)) scale(1.5); opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <nav id="navbar">
-        <a href="#">الرئيسية</a>
-        <a href="#perfumes">العطور</a>
-        <a href="#">من نحن</a>
-    </nav>
+<nav id="navbar">
+    <a href="#home">الرئيسية</a>
+    <a href="#perfumes">العطور</a>
+    <a href="#contact">التواصل</a>
+</nav>
 
-    <section class="welcome-section">
-        <div class="scene" id="scene">
-            <div class="octopus" id="toti">
-                <div class="head">
-                    <div class="face">
-                        <div class="eye left"><div class="pupil"></div></div>
-                        <div class="eye right"><div class="pupil"></div></div>
-                        <div class="mouth"></div>
-                    </div>
-                </div>
-                <div class="tentacles">
-                    <div class="tentacle t1"></div><div class="tentacle t2"></div>
-                    <div class="tentacle t3"></div><div class="tentacle t4"></div>
-                    <div class="tentacle t5"></div>
-                </div>
-            </div>
+<section id="home" class="hero">
+    <div class="scene" id="scene">
+        <div class="octopus" id="toti">
+            <div class="head"><div class="face"><div class="eye left"><div class="pupil" id="pl"></div></div><div class="eye right"><div class="pupil" id="pr"></div></div><div class="mouth"></div></div></div>
+            <div class="tentacles"><div class="tentacle"></div><div class="tentacle"></div><div class="tentacle"></div><div class="tentacle"></div><div class="tentacle"></div></div>
         </div>
-        <h1>Mr. Totti welcomes you</h1>
-        <a href="#perfumes" class="btn-scroll">اكتشف المجموعة الفاخرة</a>
-    </section>
+    </div>
+    <div class="totti-name">Mr. Totti welcomes you</div>
+</section>
 
-    <section class="perfume-section" id="perfumes">
-        <div style="text-align: center;">
-            <h2 style="font-size: 2.5rem; color: var(--gold);">مجموعة هاجر</h2>
-            <p style="font-style: italic; color: #999;">سحر الأنوثة في زجاجة</p>
-        </div>
+<section id="perfumes" class="perfume-section reveal">
+    <h2 style="color: var(--gold); font-size: 2.5rem;">مجموعة عطور هاجر</h2>
+    <div class="products-grid">
+        <div class="card" onclick="spawn(event, '🍭')"><h3>Yara Candy</h3><p>عبير الحلوى والكراميل الرائع.</p></div>
+        <div class="card" onclick="spawn(event, '🍎')"><h3>مسك الرمان</h3><p>انتعاش المسك مع الرمان.</p></div>
+        <div class="card" onclick="spawn(event, '🔥')"><h3>مسك اسكاندل</h3><p>الجاذبية والجرأة في عطر.</p></div>
+        <div class="card" onclick="spawn(event, '✨')"><h3>Bright</h3><p>إشراقة وحيوية كل يوم.</p></div>
+        <div class="card" onclick="spawn(event, '💎')"><h3>Bright Crystal</h3><p>فخامة الزهور النادرة.</p></div>
+        <div class="card" onclick="spawn(event, '👠')"><h3>Good Girl</h3><p>القوة والأنوثة الواثقة.</p></div>
+        <div class="card" onclick="spawn(event, '🥥')"><h3>Coconut Vanilla</h3><p>دفء الفانيليا وجوز الهند.</p></div>
+        <div class="card" onclick="spawn(event, '👑')"><h3>Victoria</h3><p>لمسة ملكية تليق بكِ.</p></div>
+        <div class="card" onclick="spawn(event, '🍓')"><h3>Bath & Body Works (Strawberry)</h3><p>بهجة الفراولة المنعشة.</p></div>
+        <div class="card" onclick="spawn(event, '🧁')"><h3>Pound Cake</h3><p>رائحة الكيك الدافئة الجميلة.</p></div>
+    </div>
+</section>
 
-        <div class="bottle-3d">HAJAR</div>
+<section id="contact" class="contact-section reveal">
+    <h2 class="contact-title">تواصل مبااااشره</h2>
+    <div class="btns-container">
+        <a href="https://wa.me/201201273609" class="btn-wa direct">واتساب مباشر 📱</a>
+        <a href="https://chat.whatsapp.com/FT3B0eMafw7GE0TctGeOsi" class="btn-wa group">انضمي للجروب 👥</a>
+    </div>
+    <div class="pink-note">
+        "مستنياكي في أي وقت ابعتي يلا" <br> 💕💕
+    </div>
+</section>
 
-        <div class="products-grid">
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=500" alt="مسك">
-                <div class="overlay"><h3>مسك التوت</h3></div>
-            </div>
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1543467941-22026310232d?q=80&w=500" alt="عطر">
-                <div class="overlay"><h3>Good Girl</h3></div>
-            </div>
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=500" alt="يارا">
-                <div class="overlay"><h3>Yara Candy</h3></div>
-            </div>
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1585232356876-03c633912bb9?q=80&w=500" alt="سكاندل">
-                <div class="overlay"><h3>Scandal</h3></div>
-            </div>
-        </div>
-    </section>
+<script>
+    const toti = document.getElementById('toti');
+    const pl = document.getElementById('pl');
+    const pr = document.getElementById('pr');
+    const laugh = new Audio('Boy-2-3-years-old-tickling-4(chosic.com).mp3');
 
-    <script>
-        const toti = document.getElementById('toti');
-        const navbar = document.getElementById('navbar');
-        const perfumeSection = document.getElementById('perfumes');
-        const laughSound = new Audio('Boy-2-3-years-old-tickling-4(chosic.com).mp3');
-
-        // تأثير القائمة عند التمرير
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-                perfumeSection.classList.add('visible');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+    window.addEventListener('scroll', () => {
+        document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+        document.querySelectorAll('.reveal').forEach(el => {
+            if(el.getBoundingClientRect().top < window.innerHeight - 100) el.classList.add('active');
         });
+    });
 
-        // تتبع الماوس للسيد توتي
-        document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX - window.innerWidth / 2) / 50;
-            const y = (e.clientY - window.innerHeight / 2) / 50;
-            if (!toti.classList.contains('jump')) {
-                toti.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
-            }
-        });
+    document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX - window.innerWidth/2)/35;
+        const y = (e.clientY - window.innerHeight/2)/35;
+        if(!toti.classList.contains('jump')) {
+            toti.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+            pl.style.transform = `translate(calc(-50% + ${x*0.4}px), calc(-50% + ${y*0.4}px))`;
+            pr.style.transform = `translate(calc(-50% + ${x*0.4}px), calc(-50% + ${y*0.4}px))`;
+        }
+    });
 
-        // ضحكة السيد توتي
-        document.getElementById('scene').addEventListener('click', () => {
-            if (toti.classList.contains('jump')) return;
-            laughSound.currentTime = 0;
-            laughSound.play();
-            toti.classList.add('jump');
-            setTimeout(() => toti.classList.remove('jump'), 800);
-        });
+    document.getElementById('scene').addEventListener('click', (e) => {
+        if(toti.classList.contains('jump')) return;
+        laugh.currentTime = 0; laugh.play();
+        toti.classList.add('jump');
+        spawn(e, 'bubble');
+        setTimeout(() => toti.classList.remove('jump'), 800);
+    });
 
-        // أنميشن الظهور عند التمرير (Intersection Observer)
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('visible');
-            });
-        }, { threshold: 0.1 });
-
-        observer.observe(perfumeSection);
-    </script>
+    function spawn(e, type) {
+        for(let i=0; i<12; i++){
+            const p = document.createElement('div');
+            p.className = 'particle';
+            if(type === 'bubble') p.classList.add('bubble'); else { p.innerHTML = type; p.style.fontSize = '2rem'; }
+            const x = (Math.random()-0.5)*500;
+            const y = (Math.random()-0.5)*500 - 100;
+            p.style.left = e.clientX + 'px'; p.style.top = e.clientY + 'px';
+            p.style.setProperty('--x', x+'px'); p.style.setProperty('--y', y+'px');
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 2000);
+        }
+    }
+</script>
 </body>
 </html>
